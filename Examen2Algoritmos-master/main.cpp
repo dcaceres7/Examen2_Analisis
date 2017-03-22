@@ -4,20 +4,51 @@ using namespace std;
 
 //Counts the number of posibles paths from origin to destination in the given DAG (Directed Acyclic Graph)
 //Use Dynamic Programing to optimize the process
+int** res;
+void initializer_res(int size){
+    res = new int* [size];
+    for(int i = 0 ; i<size; i++){
+        res[i]= new int[size];
+        for(int j = 1 ; j<size; j++){
+            res[i][j]=-1;
+        }
+    }
+}
+
+int solve(int** DAG, int size, int origin, int destination){
+    if (size <= 0)
+    return 0;
+    if (origin == destination)
+    return 1;
+    if (size == 1 && DAG[origin][destination])
+    return 1;
+
+    int count = 0;
+
+    for (int i = 0; i < size; i++)
+        if (DAG[origin][i] != -1){
+            if(res[origin][i] == -1){
+                int temp = solve(DAG, size, i, destination);
+                res[origin][i] = temp;
+                count += temp;
+            } else{
+                count += res[origin][i];
+            }
+        }
+    return count;
+}
+
 int countPaths(int** DAG, int size, int origin, int destination)
 {
-   if (size == 0 &&  origin== destination)
-    return 1;
-   if (size == 1 && DAG[origin][destination])
-    return 1;
-   if (size <= 0)
-    return 0;
-
-   int count = 0;
-   for (int i = 0; i < 4; i++)
-    if (DAG[origin][destination] != -1)
-        count += countPaths(DAG, i, destination, size-1 );
-   return count;
+   initializer_res(size);
+   /*for(int i = 0 ; i<size; i++){
+        for(int j = 1 ; j<size; j++){
+            cout<<i<<", "<<j<<res[i][j]<<endl;
+        }
+    }*/
+    int x = solve(DAG,size,origin,destination);
+    //cout<<"RESPUESTA: "<<x<<endl;
+   return x;
 }
 
 //Returns a vector that maps each vertex to a color (or number)
