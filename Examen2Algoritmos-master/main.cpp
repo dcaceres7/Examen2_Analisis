@@ -56,9 +56,49 @@ int countPaths(int** DAG, int size, int origin, int destination)
 //The less colors used, the better
 //Use a Greedy Paradigm to optimize the process
 //The best solution is not required
+bool checkRes(vector<int> answer, bool dis[], int nav, int size){
+    for(int i =0; i < size; i++){
+        if(dis[i]){
+            if(answer[i]==nav){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 vector<int> getVertexColors(int** graph, int size)
 {
     vector<int> answer;
+    answer.push_back(0);
+    for(int i=1; i < size; i++)
+        answer.push_back(-1);
+
+    bool dis[size];
+    for (int cr = 0; cr < size; cr++)
+        dis[cr] = false;
+
+    for(int i = 0; i < size; i++){
+        for(int j= 0; j < size; j++){
+            if(graph[i][j] != -1 || graph[j][i] != -1){
+                dis[j] = true;
+            }
+        }
+        int nav;
+        for (nav = 0; nav < size; nav++){
+            if (dis[nav] == false && checkRes(answer, dis, nav, size)){
+                break;
+            }
+        }
+        answer[i] = nav;
+        for(int j =0; j < size; j++){
+            if(graph[i][j] != -1 || graph[j][i] != -1){
+                dis[j] = false;
+            }
+        }
+
+    }
+    for(int i =0; i < size; i++)
+    cout<<"vertice en la posicion: "<<i<<" color: "<<answer[i]<<endl;
     return answer;
 }
 
